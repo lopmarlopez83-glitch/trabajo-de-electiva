@@ -2,64 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOficinaRequest;
+use App\Http\Requests\UpdateOficinaRequest;
 use App\Models\Oficina;
-use Illuminate\Http\Request;
 
 class OficinaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $oficinas = Oficina::latest()->paginate(10);
+        return view('oficinas.index', compact('oficinas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('oficinas.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreOficinaRequest $request)
     {
-        //
+        Oficina::create($request->validated());
+        return redirect()->route('oficinas.index')->with('success', 'Oficina creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Oficina $oficina)
     {
-        //
+        $oficina->loadCount('users', 'solicitudes');
+        return view('oficinas.show', compact('oficina'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Oficina $oficina)
     {
-        //
+        return view('oficinas.edit', compact('oficina'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Oficina $oficina)
+    public function update(UpdateOficinaRequest $request, Oficina $oficina)
     {
-        //
+        $oficina->update($request->validated());
+        return redirect()->route('oficinas.index')->with('success', 'Oficina actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Oficina $oficina)
     {
-        //
+        // Evitar borrar oficinas con usuarios o solicitudes asociadas
+        if ($oficina->users()->exists() || $oficina->solicitudes()->exists()) {
+            return back()->with('error', 'No se puede eliminar: la oficina tiene usuarios o solicitudes asociadas.');
+        }
+        $oficina->delete();
+        return redirect()->route('oficinas.index')->with('success', 'Oficina eliminada correctamente.');
     }
 }

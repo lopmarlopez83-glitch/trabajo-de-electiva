@@ -3,63 +3,56 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entrega;
+use App\Models\Equipo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EntregaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Entrega::with(['solicitud', 'equipo.modelo.marca', 'user', 'oficina']);
+
+        if ($request->filled('tipo')) {
+            $query->where('tipo', $request->tipo);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $entregas = $query->latest('fecha_entrega')->paginate(15)->withQueryString();
+
+        $resumen = [
+            'prestamos_activos'  => Entrega::where('tipo', 'prestamo')->where('status', Entrega::STATUS_ACTIVA)->count(),
+            'asignaciones_activas' => Entrega::where('tipo', 'asignacion')->where('status', Entrega::STATUS_ACTIVA)->count(),
+            'devueltas'          => Entrega::where('status', Entrega::STATUS_DEVUELTA)->count(),
+        ];
+
+        return view('entregas.index', compact('entregas', 'resumen'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function devolver(Entrega $entrega)
     {
-        //
-    }
+        if ($entrega->status === Entrega::STATUS_DEVUELTA) {
+            return back()->with('error', 'Esta entrega ya fue devuelta.');
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        try {
+            DB::transaction(function () use ($entrega) {
+                // Marcar entrega como devuelta
+                $entrega->update([
+                    'status'                    => Entrega::STATUS_DEVUELTA,
+                    'fecha_devolucion_real'     => now(),
+                ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Entrega $entrega)
-    {
-        //
-    }
+                // Liberar equipo
+                $entrega->equipo->update(['status' => Equipo::STATUS_DISPONIBLE]);
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al devolver: ' . $e->getMessage());
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Entrega $entrega)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Entrega $entrega)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Entrega $entrega)
-    {
-        //
+        return redirect()->route('entregas.index')
+            ->with('success', 'Equipo devuelto y disponible nuevamente.');
     }
 }

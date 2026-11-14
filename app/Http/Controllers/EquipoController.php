@@ -2,64 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEquipoRequest;
+use App\Http\Requests\UpdateEquipoRequest;
 use App\Models\Equipo;
-use Illuminate\Http\Request;
+use App\Models\Modelo;
 
 class EquipoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $equipos = Equipo::with(['modelo.marca', 'modelo.categoria'])
+            ->latest()
+            ->paginate(10);
+        return view('equipos.index', compact('equipos'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $modelos = Modelo::with(['marca', 'categoria'])->orderBy('nombre')->get();
+        return view('equipos.create', compact('modelos'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreEquipoRequest $request)
     {
-        //
+        Equipo::create($request->validated());
+        return redirect()->route('equipos.index')->with('success', 'Equipo registrado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Equipo $equipo)
     {
-        //
+        $equipo->load(['modelo.marca', 'modelo.categoria', 'entregas.user', 'entregas.oficina']);
+        return view('equipos.show', compact('equipo'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Equipo $equipo)
     {
-        //
+        $modelos = Modelo::with(['marca', 'categoria'])->orderBy('nombre')->get();
+        return view('equipos.edit', compact('equipo', 'modelos'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Equipo $equipo)
+    public function update(UpdateEquipoRequest $request, Equipo $equipo)
     {
-        //
+        $equipo->update($request->validated());
+        return redirect()->route('equipos.index')->with('success', 'Equipo actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Equipo $equipo)
     {
-        //
+        // Solo se puede dar de baja si está disponible (no prestado/asignado)
+        if (!in_array($equipo->status, [Equipo::STATUS_DISPONIBLE, Equipo::STATUS_EN_MANTENIMIENTO])) {
+            return back()->with('error', 'No se puede eliminar un equipo actualmente prestado o asignado.');
+        }
+        $equipo->delete();
+        return redirect()->route('equipos.index')->with('success', 'Equipo dado de baja correctamente.');
     }
 }
