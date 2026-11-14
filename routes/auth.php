@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\PasswordController;
 // use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RecuperarPasswordController;
 
 Route::middleware('guest')->group(function () {
     // Registro público deshabilitado (los usuarios los crea el Admin)
@@ -55,4 +56,22 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+
+Route::middleware('guest')->group(function () {
+    // ... login existente ...
+
+    // Recuperación personalizada (correo + cédula)
+    Route::get('forgot-password', [RecuperarPasswordController::class, 'show'])
+        ->name('password.request');
+
+    Route::post('forgot-password', [RecuperarPasswordController::class, 'verificar'])
+        ->name('password.email');
+
+    Route::get('reset-password', [RecuperarPasswordController::class, 'showReset'])
+        ->name('password.reset.form');
+
+    Route::post('reset-password', [RecuperarPasswordController::class, 'reset'])
+        ->name('password.store');
+});
 });

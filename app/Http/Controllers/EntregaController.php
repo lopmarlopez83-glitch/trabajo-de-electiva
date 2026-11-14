@@ -11,7 +11,13 @@ class EntregaController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
         $query = Entrega::with(['solicitud', 'equipo.modelo.marca', 'user', 'oficina']);
+
+        // Solicitante: solo ve sus propias entregas
+        if ($user->esSolicitante()) {
+            $query->where('user_id', $user->id);
+        }
 
         if ($request->filled('tipo')) {
             $query->where('tipo', $request->tipo);
@@ -23,9 +29,17 @@ class EntregaController extends Controller
         $entregas = $query->latest('fecha_entrega')->paginate(15)->withQueryString();
 
         $resumen = [
-            'prestamos_activos'  => Entrega::where('tipo', 'prestamo')->where('status', Entrega::STATUS_ACTIVA)->count(),
-            'asignaciones_activas' => Entrega::where('tipo', 'asignacion')->where('status', Entrega::STATUS_ACTIVA)->count(),
-            'devueltas'          => Entrega::where('status', Entrega::STATUS_DEVUELTA)->count(),
+            'prestamos_activos'    => Entrega::when($user->esSolicitante(), fn ($q) => $q->where('user_id', $user->id))
+                                              ->where('tipo', 'prestamo')
+                                              ->where('status', Entrega::STATUS_ACTIVA)
+                                              ->count(),
+            'asignaciones_activas' => Entrega::when($user->esSolicitante(), fn ($q) => $q->where('user_id', $user->id))
+                                              ->where('tipo', 'asignacion')
+                                              ->where('status', Entrega::STATUS_ACTIVA)
+                                              ->count(),
+            'devueltas'            => Entrega::when($user->esSolicitante(), fn ($q) => $q->where('user_id', $user->id))
+                                              ->where('status', Entrega::STATUS_DEVUELTA)
+                                              ->count(),
         ];
 
         return view('entregas.index', compact('entregas', 'resumen'));
@@ -41,8 +55,8 @@ class EntregaController extends Controller
             DB::transaction(function () use ($entrega) {
                 // Marcar entrega como devuelta
                 $entrega->update([
-                    'status'                    => Entrega::STATUS_DEVUELTA,
-                    'fecha_devolucion_real'     => now(),
+                    'status'                => Entrega::STATUS_DEVUELTA,
+                    'fecha_devolucion_real' => now(),
                 ]);
 
                 // Liberar equipo
