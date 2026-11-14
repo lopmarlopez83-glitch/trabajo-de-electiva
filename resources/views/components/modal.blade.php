@@ -1,4 +1,3 @@
-cat > resources/views/components/modal.blade.php << 'EOF'
 @props(['id' => 'modal', 'title' => ''])
 
 <div x-data="{ open: false }" x-on:open-modal-{{ $id }}.window="open = true" x-show="open" x-cloak
