@@ -25,8 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('solicitudes', [SolicitudController::class, 'index'])->name('solicitudes.index');
     Route::get('solicitudes/{solicitud}', [SolicitudController::class, 'show'])
-        ->whereNumber('solicitud')
-        ->name('solicitudes.show');
+        ->whereNumber('solicitud')->name('solicitudes.show');
 
     Route::get('entregas', [EntregaController::class, 'index'])->name('entregas.index');
 
@@ -36,7 +35,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class)->except(['show']);
         Route::resource('oficinas', OficinaController::class);
 
-        // Catálogo
         Route::get('catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 
         Route::get('catalogo/categorias/create', [CatalogoController::class, 'createCategoria'])->name('catalogo.categorias.create');
@@ -60,7 +58,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('equipos', EquipoController::class);
         Route::get('inventario', [InventarioController::class, 'index'])->name('inventario.index');
 
-        // Acciones sobre solicitudes
         Route::put('solicitudes/{solicitud}/aprobar', [SolicitudController::class, 'aprobar'])
             ->whereNumber('solicitud')->name('solicitudes.aprobar');
         Route::put('solicitudes/{solicitud}/rechazar', [SolicitudController::class, 'rechazar'])
@@ -68,7 +65,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('solicitudes/{solicitud}', [SolicitudController::class, 'destroy'])
             ->whereNumber('solicitud')->name('solicitudes.destroy');
 
-        // Devolución
         Route::put('entregas/{entrega}/devolver', [EntregaController::class, 'devolver'])
             ->whereNumber('entrega')->name('entregas.devolver');
     });
