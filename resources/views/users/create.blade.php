@@ -22,11 +22,18 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Cédula *</label>
-            <input type="text" name="cedula" value="{{ old('cedula') }}"
-                   class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-            @error('cedula') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
-        </div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Cédula *</label>
+    <input type="text" name="cedula" value="{{ old('cedula') }}"
+           inputmode="numeric"
+           pattern="\d{5,10}"
+           minlength="5"
+           maxlength="10"
+           title="Solo números, entre 5 y 10 dígitos"
+           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+           required>
+    @error('cedula') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+</div>
 
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Correo *</label>
