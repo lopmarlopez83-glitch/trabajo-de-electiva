@@ -11,12 +11,10 @@ use Illuminate\Support\Facades\Hash;
 class PerfilController extends Controller
 {
     public function edit(Request $request)
-    {
-        $user = $request->user();
-        $oficinas = Oficina::orderBy('nombre')->get();
-        return view('perfil.edit', compact('user', 'oficinas'));
-    }
-
+{
+    $user = $request->user();
+    return view('perfil.edit', compact('user'));
+}
     public function update(UpdateOwnProfileRequest $request)
     {
         $user = $request->user();

@@ -33,26 +33,13 @@
                    class="w-full bg-gray-100 border-gray-300 rounded-lg shadow-sm">
         </div>
 
-        @if (auth()->user()->esAdmin())
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Oficina *</label>
-                <select name="oficina_id"
-                        class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    @foreach ($oficinas as $oficina)
-                        <option value="{{ $oficina->id }}" @selected(old('oficina_id', $user->oficina_id) == $oficina->id)>
-                            {{ $oficina->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('oficina_id') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
-            </div>
-        @else
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Oficina</label>
-                <input type="text" value="{{ $user->oficina->nombre ?? '—' }}" disabled
-                       class="w-full bg-gray-100 border-gray-300 rounded-lg shadow-sm">
-            </div>
-        @endif
+        {{-- ✅ Oficina: siempre solo lectura (el admin la edita desde /users/{id}/edit) --}}
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Oficina</label>
+            <input type="text" value="{{ $user->oficina->nombre ?? '—' }}" disabled
+                   class="w-full bg-gray-100 border-gray-300 rounded-lg shadow-sm">
+            <p class="text-xs text-gray-500 mt-1">La oficina la gestiona el administrador.</p>
+        </div>
 
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña (opcional)</label>
