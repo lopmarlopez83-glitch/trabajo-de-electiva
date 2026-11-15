@@ -3,7 +3,7 @@
 @section('title', 'Detalle de oficina')
 
 @section('content')
-<x-card title="Oficina: {{ $oficina->nombre }}" class="max-w-xl">
+<x-card title="Oficina: {{ $oficina->nombre }}" class="max-w-xl mx-auto">
     <dl class="space-y-2 text-sm">
         <div class="flex justify-between border-b py-2">
             <dt class="text-gray-600">ID</dt>

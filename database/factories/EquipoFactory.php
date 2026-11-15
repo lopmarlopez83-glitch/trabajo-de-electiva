@@ -13,14 +13,16 @@ class EquipoFactory extends Factory
     public function definition(): array
     {
         return [
-            'serial'             => strtoupper($this->faker->unique()->bothify('SN-####-????')),
-            'codigo_patrimonial' => strtoupper($this->faker->unique()->bothify('PAT-#####')),
-            'modelo_id'          => Modelo::factory(),
-            'status'             => $this->faker->randomElement([
+            'serial'        => strtoupper($this->faker->unique()->bothify('SN-####-????')),
+            'modelo_id'     => Modelo::factory(),
+            'cpu'           => $this->faker->optional(0.6)->randomElement(['Intel Core i5', 'Intel Core i7', 'AMD Ryzen 5', 'AMD Ryzen 7']),
+            'ram'           => $this->faker->optional(0.6)->randomElement(['8GB', '16GB', '32GB']),
+            'almacenamiento'=> $this->faker->optional(0.6)->randomElement(['256GB SSD', '512GB SSD', '1TB HDD', '1TB SSD']),
+            'status'        => $this->faker->randomElement([
                 Equipo::STATUS_DISPONIBLE,
                 Equipo::STATUS_EN_MANTENIMIENTO,
             ]),
-            'observaciones'      => $this->faker->optional()->sentence(),
+            'observaciones' => $this->faker->optional()->sentence(),
         ];
     }
 

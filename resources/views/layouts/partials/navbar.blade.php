@@ -1,5 +1,5 @@
 <header class="bg-white shadow-sm border-b">
-    <div class="flex items-center justify-between px-6 py-3">
+    <div class="flex items-center justify-between px-6 py-2">
         <h1 class="text-lg font-semibold text-gray-800">
             @yield('title', 'Panel')
         </h1>

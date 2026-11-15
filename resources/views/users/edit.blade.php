@@ -3,7 +3,7 @@
 @section('title', 'Editar usuario')
 
 @section('content')
-<x-card title="Editar usuario: {{ $user->nombre_completo }}" class="max-w-2xl">
+<x-card title="Editar usuario: {{ $user->nombre_completo }}" class="max-w-2xl mx-auto">
     <form method="POST" action="{{ route('users.update', $user) }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @csrf @method('PUT')
 

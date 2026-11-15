@@ -3,7 +3,7 @@
 @section('title', 'Mi perfil')
 
 @section('content')
-<x-card title="Mi perfil" class="max-w-2xl">
+<x-card title="Mi perfil" class="max-w-2xl mx-auto">
     <form method="POST" action="{{ route('perfil.update') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @csrf @method('PUT')
 

@@ -3,7 +3,7 @@
 @section('title', 'Nueva oficina')
 
 @section('content')
-<x-card title="Registrar nueva oficina" class="max-w-xl">
+<x-card title="Registrar nueva oficina" class="max-w-xl mx-auto">
     <form method="POST" action="{{ route('oficinas.store') }}" class="space-y-4">
         @csrf
 

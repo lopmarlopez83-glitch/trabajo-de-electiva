@@ -27,7 +27,8 @@
 <x-card class="mb-4">
     <form method="GET" action="{{ route('inventario.index') }}" class="flex flex-wrap gap-3 items-end">
         <div class="flex-1 min-w-[200px]">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Buscar (serial o código patrimonial)</label>
+            {{-- ✅ Quitamos la mención al código patrimonial --}}
+            <label class="block text-xs font-medium text-gray-600 mb-1">Buscar (por serial)</label>
             <input type="text" name="search" value="{{ request('search') }}"
                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
         </div>
@@ -55,12 +56,12 @@
 @if ($equipos->isEmpty())
     <x-card><p class="text-sm text-gray-500">No se encontraron equipos con esos filtros.</p></x-card>
 @else
-    <x-table :headers="['#', 'Serial', 'Código', 'Modelo', 'Marca', 'Categoría', 'Status']">
+    {{-- ✅ Coinciden exactamente 6 columnas en el header y 6 en el body --}}
+    <x-table :headers="['#', 'Serial', 'Modelo', 'Marca', 'Categoría', 'Status']">
         @foreach ($equipos as $equipo)
             <tr class="hover:bg-gray-50">
                 <td class="px-4 py-3 text-gray-600">{{ $equipo->id }}</td>
                 <td class="px-4 py-3 font-mono text-xs">{{ $equipo->serial }}</td>
-                <td class="px-4 py-3 font-mono text-xs">{{ $equipo->codigo_patrimonial ?? '—' }}</td>
                 <td class="px-4 py-3">{{ $equipo->modelo->nombre ?? '—' }}</td>
                 <td class="px-4 py-3">{{ $equipo->modelo->marca->nombre ?? '—' }}</td>
                 <td class="px-4 py-3">

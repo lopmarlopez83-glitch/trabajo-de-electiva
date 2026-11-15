@@ -3,7 +3,7 @@
 @section('title', 'Nueva solicitud')
 
 @section('content')
-<x-card title="Crear nueva solicitud" class="max-w-3xl">
+<x-card title="Crear nueva solicitud" class="max-w-3xl mx-auto">
     <form method="POST" action="{{ route('solicitudes.store') }}" class="space-y-4">
         @csrf
 

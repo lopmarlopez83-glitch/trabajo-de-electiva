@@ -49,7 +49,6 @@ class EquipoController extends Controller
 
     public function destroy(Equipo $equipo)
     {
-        // Solo se puede dar de baja si está disponible (no prestado/asignado)
         if (!in_array($equipo->status, [Equipo::STATUS_DISPONIBLE, Equipo::STATUS_EN_MANTENIMIENTO])) {
             return back()->with('error', 'No se puede eliminar un equipo actualmente prestado o asignado.');
         }

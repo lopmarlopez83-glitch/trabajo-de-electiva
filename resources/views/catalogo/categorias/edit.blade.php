@@ -3,7 +3,7 @@
 @section('title', 'Editar categoría')
 
 @section('content')
-<x-card title="Editar categoría: {{ $categoria->nombre }}" class="max-w-xl">
+<x-card title="Editar categoría: {{ $categoria->nombre }}" class="max-w-xl mx-auto">
     <form method="POST" action="{{ route('catalogo.categorias.update', $categoria) }}" class="space-y-4">
         @csrf @method('PUT')
 

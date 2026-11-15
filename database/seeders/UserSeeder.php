@@ -22,29 +22,29 @@ class UserSeeder extends Seeder
             ['ubicacion' => 'Piso 1 - Informática']
         );
 
-        // Admin
+        // ✅ Admin (nuevas credenciales)
         User::updateOrCreate(
-            ['email' => 'admin@sigedtec.test'],
+            ['email' => 'sebas@gmail.com'],
             [
-                'nombres'    => 'Admin',
-                'apellidos'  => 'Soporte',
+                'nombres'    => 'Sebastian',
+                'apellidos'  => 'Lopez',
                 'cedula'     => '12345678',
                 'oficina_id' => $soporte->id,
                 'role'       => User::ROLE_ADMIN,
-                'password'   => Hash::make('Admin123!'),
+                'password'   => Hash::make('12345678'),
             ]
         );
 
-        // Solicitante
+        // ✅ Solicitante (nuevas credenciales)
         User::updateOrCreate(
-            ['email' => 'solicitante@sigedtec.test'],
+            ['email' => 'sofi@gmail.com'],
             [
-                'nombres'    => 'Juan',
-                'apellidos'  => 'Pérez',
+                'nombres'    => 'Sofia',
+                'apellidos'  => 'Lopez',
                 'cedula'     => '87654321',
                 'oficina_id' => $sistemas->id,
                 'role'       => User::ROLE_SOLICITANTE,
-                'password'   => Hash::make('Sol12345!'),
+                'password'   => Hash::make('12345678'),
             ]
         );
     }

@@ -3,7 +3,7 @@
 @section('title', 'Editar modelo')
 
 @section('content')
-<x-card title="Editar modelo: {{ $modelo->nombre }}" class="max-w-xl">
+<x-card title="Editar modelo: {{ $modelo->nombre }}" class="max-w-xl mx-auto">
     <form method="POST" action="{{ route('catalogo.modelos.update', $modelo) }}" class="space-y-4">
         @csrf @method('PUT')
 

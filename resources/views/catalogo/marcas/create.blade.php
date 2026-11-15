@@ -3,7 +3,7 @@
 @section('title', 'Nueva marca')
 
 @section('content')
-<x-card title="Registrar nueva marca" class="max-w-xl">
+<x-card title="Registrar nueva marca" class="max-w-xl mx-auto">
     <form method="POST" action="{{ route('catalogo.marcas.store') }}" class="space-y-4">
         @csrf
 

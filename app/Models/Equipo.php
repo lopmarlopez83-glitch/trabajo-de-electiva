@@ -14,13 +14,15 @@ class Equipo extends Model
 
     protected $fillable = [
         'serial',
-        'codigo_patrimonial',
         'modelo_id',
+        'cpu',
+        'ram',
+        'almacenamiento',
         'status',
         'observaciones',
     ];
 
-    // Constantes de status (para usar en código)
+    // Constantes de status
     const STATUS_DISPONIBLE       = 'disponible';
     const STATUS_EN_MANTENIMIENTO = 'en_mantenimiento';
     const STATUS_PRESTADO         = 'prestado';
@@ -47,5 +49,11 @@ class Equipo extends Model
     public function estaDisponible(): bool
     {
         return $this->status === self::STATUS_DISPONIBLE;
+    }
+
+    public function requiereEspecificaciones(): bool
+    {
+        $cat = strtolower($this->modelo->categoria->nombre ?? '');
+        return in_array($cat, ['computadora de mesa', 'laptop']);
     }
 }

@@ -3,7 +3,7 @@
 @section('title', 'Editar oficina')
 
 @section('content')
-<x-card title="Editar oficina" class="max-w-xl">
+<x-card title="Editar oficina" class="max-w-xl mx-auto">
     <form method="POST" action="{{ route('oficinas.update', $oficina) }}" class="space-y-4">
         @csrf @method('PUT')
 

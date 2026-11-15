@@ -13,10 +13,6 @@
                 <dd class="font-mono font-medium">{{ $equipo->serial }}</dd>
             </div>
             <div class="border-b pb-2">
-                <dt class="text-gray-500 text-xs uppercase">Código patrimonial</dt>
-                <dd class="font-mono font-medium">{{ $equipo->codigo_patrimonial ?? '—' }}</dd>
-            </div>
-            <div class="border-b pb-2">
                 <dt class="text-gray-500 text-xs uppercase">Marca</dt>
                 <dd class="font-medium">{{ $equipo->modelo->marca->nombre ?? '—' }}</dd>
             </div>
@@ -40,6 +36,23 @@
                     }">{{ ucfirst(str_replace('_', ' ', $equipo->status)) }}</x-badge>
                 </dd>
             </div>
+
+            {{-- Especificaciones condicionales --}}
+            @if ($equipo->requiereEspecificaciones())
+                <div class="border-b pb-2">
+                    <dt class="text-gray-500 text-xs uppercase">CPU</dt>
+                    <dd class="font-medium">{{ $equipo->cpu ?? '—' }}</dd>
+                </div>
+                <div class="border-b pb-2">
+                    <dt class="text-gray-500 text-xs uppercase">RAM</dt>
+                    <dd class="font-medium">{{ $equipo->ram ?? '—' }}</dd>
+                </div>
+                <div class="border-b pb-2">
+                    <dt class="text-gray-500 text-xs uppercase">Almacenamiento</dt>
+                    <dd class="font-medium">{{ $equipo->almacenamiento ?? '—' }}</dd>
+                </div>
+            @endif
+
             <div class="sm:col-span-2">
                 <dt class="text-gray-500 text-xs uppercase">Observaciones</dt>
                 <dd class="text-gray-700">{{ $equipo->observaciones ?? '—' }}</dd>

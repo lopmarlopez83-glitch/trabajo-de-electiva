@@ -11,8 +11,12 @@ return new class extends Migration
         Schema::create('equipos', function (Blueprint $table) {
             $table->id();
             $table->string('serial', 100)->unique();
-            $table->string('codigo_patrimonial', 100)->unique()->nullable();
             $table->foreignId('modelo_id')->constrained('modelos')->cascadeOnUpdate()->restrictOnDelete();
+            
+            $table->string('cpu', 100)->nullable();
+            $table->string('ram', 100)->nullable();
+            $table->string('almacenamiento', 100)->nullable();
+            
             $table->enum('status', ['disponible', 'en_mantenimiento', 'prestado', 'asignado'])->default('disponible');
             $table->text('observaciones')->nullable();
             $table->timestamps();

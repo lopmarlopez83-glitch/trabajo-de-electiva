@@ -11,12 +11,11 @@
 @if ($equipos->isEmpty())
     <x-card><p class="text-sm text-gray-500">No hay equipos registrados aún.</p></x-card>
 @else
-    <x-table :headers="['#', 'Serial', 'Código patrimonial', 'Modelo', 'Marca', 'Categoría', 'Status', 'Acciones']">
+    <x-table :headers="['#', 'Serial', 'Modelo', 'Marca', 'Categoría', 'Status', 'Acciones']">
         @foreach ($equipos as $equipo)
             <tr class="hover:bg-gray-50">
                 <td class="px-4 py-3 text-gray-600">{{ $equipo->id }}</td>
                 <td class="px-4 py-3 font-mono text-xs">{{ $equipo->serial }}</td>
-                <td class="px-4 py-3 font-mono text-xs">{{ $equipo->codigo_patrimonial ?? '—' }}</td>
                 <td class="px-4 py-3">{{ $equipo->modelo->nombre ?? '—' }}</td>
                 <td class="px-4 py-3">{{ $equipo->modelo->marca->nombre ?? '—' }}</td>
                 <td class="px-4 py-3">

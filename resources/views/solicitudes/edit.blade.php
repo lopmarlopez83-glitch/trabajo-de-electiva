@@ -3,7 +3,7 @@
 @section('title', 'Editar solicitud')
 
 @section('content')
-<x-card title="Editar solicitud #{{ $solicitud->id }}" class="max-w-2xl">
+<x-card title="Editar solicitud #{{ $solicitud->id }}" class="max-w-2xl mx-auto">
     <form method="POST" action="{{ route('solicitudes.update', $solicitud) }}" class="space-y-4">
         @csrf @method('PUT')
 
