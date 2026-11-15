@@ -15,6 +15,7 @@ class Solicitud extends Model
     protected $fillable = [
         'user_id',
         'oficina_id',
+        'categoria_id',  
         'fecha_solicitud',
         'fecha_requerida',
         'fecha_fin',
@@ -31,7 +32,6 @@ class Solicitud extends Model
         'cantidad'        => 'integer',
     ];
 
-    // Constantes
     const STATUS_PENDIENTE  = 'pendiente';
     const STATUS_APROBADA   = 'aprobada';
     const STATUS_RECHAZADA  = 'rechazada';
@@ -48,6 +48,12 @@ class Solicitud extends Model
     public function oficina()
     {
         return $this->belongsTo(Oficina::class);
+    }
+
+    
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
     }
 
     public function equipos()

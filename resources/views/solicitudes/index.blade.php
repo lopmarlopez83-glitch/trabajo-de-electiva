@@ -9,11 +9,11 @@
     <h2 class="text-xl font-semibold text-gray-800">
         {{ $user->esAdmin() ? 'Todas las solicitudes' : 'Mis solicitudes' }}
     </h2>
-    {{-- ✅ Todos los usuarios autenticados pueden crear solicitudes --}}
-    <x-button :href="route('solicitudes.create')">+ Nueva solicitud</x-button>
+    @if ($user->esSolicitante())
+        <x-button :href="route('solicitudes.create')">+ Nueva solicitud</x-button>
+    @endif
 </div>
 
-{{-- Filtros --}}
 <x-card class="mb-4">
     <form method="GET" action="{{ route('solicitudes.index') }}" class="flex flex-wrap gap-3 items-end">
         <div>
@@ -37,12 +37,15 @@
 @if ($solicitudes->isEmpty())
     <x-card><p class="text-sm text-gray-500">No hay solicitudes registradas.</p></x-card>
 @else
-    <x-table :headers="['#', 'Solicitante', 'Oficina', 'Tipo', 'Cantidad', 'F. requerida', 'Status', 'Acciones']">
+    <x-table :headers="['#', 'Solicitante', 'Oficina', 'Categoría', 'Tipo', 'Cantidad', 'F. requerida', 'Status', 'Acciones']">
         @foreach ($solicitudes as $s)
             <tr class="hover:bg-gray-50">
                 <td class="px-4 py-3 text-gray-600">{{ $s->id }}</td>
                 <td class="px-4 py-3">{{ $s->user->nombre_completo ?? '—' }}</td>
                 <td class="px-4 py-3">{{ $s->oficina->nombre ?? '—' }}</td>
+                <td class="px-4 py-3">
+                    <x-badge color="indigo">{{ $s->categoria->nombre ?? '—' }}</x-badge>
+                </td>
                 <td class="px-4 py-3">
                     <x-badge :color="$s->tipo === 'prestamo' ? 'blue' : 'purple'">
                         {{ ucfirst($s->tipo) }}
@@ -62,10 +65,17 @@
                     <div class="flex gap-2 flex-wrap">
                         <a href="{{ route('solicitudes.show', $s) }}" class="text-blue-600 hover:underline text-sm">Ver</a>
 
-                        @if ($user->esSolicitante() && $s->esEditable())
+                        {{-- Solicitante: editar/cancelar solo si es dueño y está pendiente --}}
+                        @if ($user->esSolicitante() && $s->user_id === $user->id && $s->esEditable())
                             <a href="{{ route('solicitudes.edit', $s) }}" class="text-yellow-600 hover:underline text-sm">Editar</a>
+                            <form method="POST" action="{{ route('solicitudes.destroy', $s) }}"
+                                  onsubmit="return confirm('¿Cancelar la solicitud #{{ $s->id }}?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:underline text-sm">Cancelar</button>
+                            </form>
                         @endif
 
+                        {{-- Admin: eliminar cualquier solicitud excepto aprobada --}}
                         @if ($user->esAdmin() && $s->status !== 'aprobada')
                             <form method="POST" action="{{ route('solicitudes.destroy', $s) }}"
                                   onsubmit="return confirm('¿Eliminar la solicitud #{{ $s->id }}?')">

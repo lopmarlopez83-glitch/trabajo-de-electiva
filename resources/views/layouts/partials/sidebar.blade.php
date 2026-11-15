@@ -25,13 +25,15 @@
         <x-nav-link :href="route('solicitudes.index')" :active="request()->routeIs('solicitudes.*')" icon="📝">Solicitudes</x-nav-link>
         <x-nav-link :href="route('entregas.index')" :active="request()->routeIs('entregas.*')" icon="🚚">Entregas</x-nav-link>
 
-        {{-- ✅ Botón "Nueva solicitud" visible para admin y solicitante --}}
-        <div class="pt-4">
-            <a href="{{ route('solicitudes.create') }}"
-               class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2 text-sm font-medium transition">
-                + Nueva solicitud
-            </a>
-        </div>
+        {{-- ✅ Botón "Nueva solicitud" solo para solicitante --}}
+        @if ($user->esSolicitante())
+            <div class="pt-4">
+                <a href="{{ route('solicitudes.create') }}"
+                   class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2 text-sm font-medium transition">
+                    + Nueva solicitud
+                </a>
+            </div>
+        @endif
 
     </nav>
 

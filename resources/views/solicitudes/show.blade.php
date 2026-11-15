@@ -19,6 +19,12 @@
                 <dd class="font-medium">{{ $solicitud->oficina->nombre ?? '—' }}</dd>
             </div>
             <div class="border-b pb-2">
+                <dt class="text-gray-500 text-xs uppercase">Categoría requerida</dt>
+                <dd>
+                    <x-badge color="indigo">{{ $solicitud->categoria->nombre ?? '—' }}</x-badge>
+                </dd>
+            </div>
+            <div class="border-b pb-2">
                 <dt class="text-gray-500 text-xs uppercase">Tipo</dt>
                 <dd>
                     <x-badge :color="$solicitud->tipo === 'prestamo' ? 'blue' : 'purple'">
@@ -62,8 +68,25 @@
             </div>
         @endif
 
-        <div class="flex gap-2 mt-6">
+        {{-- Botones: Volver + Cancelar (solicitante) + Eliminar (admin) --}}
+        <div class="flex gap-2 mt-6 flex-wrap">
             <x-button :href="route('solicitudes.index')" variant="secondary">Volver</x-button>
+
+            @if ($user->esSolicitante() && $solicitud->user_id === $user->id && $solicitud->esEditable())
+                <form method="POST" action="{{ route('solicitudes.destroy', $solicitud) }}"
+                      onsubmit="return confirm('¿Cancelar esta solicitud?')">
+                    @csrf @method('DELETE')
+                    <x-button type="submit" variant="danger">Cancelar solicitud</x-button>
+                </form>
+            @endif
+
+            @if ($user->esAdmin() && $solicitud->status !== 'aprobada')
+                <form method="POST" action="{{ route('solicitudes.destroy', $solicitud) }}"
+                      onsubmit="return confirm('¿Eliminar esta solicitud?')">
+                    @csrf @method('DELETE')
+                    <x-button type="submit" variant="danger">Eliminar</x-button>
+                </form>
+            @endif
         </div>
     </x-card>
 
@@ -71,13 +94,17 @@
     @if ($user->esAdmin() && $solicitud->status === 'pendiente')
         <x-card title="Aprobar solicitud">
             @if ($equiposDisponibles->isEmpty())
-                <p class="text-sm text-gray-500">No hay equipos disponibles para asignar.</p>
+                <p class="text-sm text-gray-500">
+                    No hay equipos disponibles de la categoría
+                    <strong>{{ $solicitud->categoria->nombre ?? '—' }}</strong>.
+                </p>
             @else
                 <form method="POST" action="{{ route('solicitudes.aprobar', $solicitud) }}" class="space-y-3">
                     @csrf @method('PUT')
 
                     <p class="text-xs text-gray-500">
-                        Selecciona exactamente <strong>{{ $solicitud->cantidad }}</strong> equipo(s):
+                        Selecciona exactamente <strong>{{ $solicitud->cantidad }}</strong> equipo(s)
+                        de la categoría <strong>{{ $solicitud->categoria->nombre ?? '—' }}</strong>:
                     </p>
 
                     <div class="max-h-64 overflow-y-auto border rounded-lg p-2 space-y-1">
@@ -117,7 +144,7 @@
 
 </div>
 
-{{-- Equipos asignados (si aprobada) --}}
+{{-- Equipos asignados --}}
 @if ($solicitud->equipos->isNotEmpty())
     <x-card title="Equipos asignados" class="mt-4">
         <x-table :headers="['Serial', 'Código', 'Modelo', 'Marca', 'Categoría']">

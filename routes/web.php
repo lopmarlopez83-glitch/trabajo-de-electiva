@@ -24,13 +24,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
 
     Route::get('solicitudes', [SolicitudController::class, 'index'])->name('solicitudes.index');
-
-    // ✅ create y store ahora son compartidos (admin y solicitante pueden crear)
-    Route::get('solicitudes/create', [SolicitudController::class, 'create'])->name('solicitudes.create');
-    Route::post('solicitudes', [SolicitudController::class, 'store'])->name('solicitudes.store');
-
     Route::get('solicitudes/{solicitud}', [SolicitudController::class, 'show'])
         ->whereNumber('solicitud')->name('solicitudes.show');
+
+    // ✅ destroy compartido: admin elimina cualquiera, solicitante solo las suyas pendientes
+    Route::delete('solicitudes/{solicitud}', [SolicitudController::class, 'destroy'])
+        ->whereNumber('solicitud')->name('solicitudes.destroy');
 
     Route::get('entregas', [EntregaController::class, 'index'])->name('entregas.index');
 
@@ -67,8 +66,6 @@ Route::middleware('auth')->group(function () {
             ->whereNumber('solicitud')->name('solicitudes.aprobar');
         Route::put('solicitudes/{solicitud}/rechazar', [SolicitudController::class, 'rechazar'])
             ->whereNumber('solicitud')->name('solicitudes.rechazar');
-        Route::delete('solicitudes/{solicitud}', [SolicitudController::class, 'destroy'])
-            ->whereNumber('solicitud')->name('solicitudes.destroy');
 
         Route::put('entregas/{entrega}/devolver', [EntregaController::class, 'devolver'])
             ->whereNumber('entrega')->name('entregas.devolver');
@@ -76,7 +73,9 @@ Route::middleware('auth')->group(function () {
 
     // ==================== SOLO SOLICITANTE ====================
     Route::middleware('role:solicitante')->group(function () {
-        // ✅ create y store ya no están aquí (se movieron al grupo compartido)
+        Route::get('solicitudes/create', [SolicitudController::class, 'create'])->name('solicitudes.create');
+        Route::post('solicitudes', [SolicitudController::class, 'store'])->name('solicitudes.store');
+
         Route::get('solicitudes/{solicitud}/edit', [SolicitudController::class, 'edit'])
             ->whereNumber('solicitud')->name('solicitudes.edit');
         Route::put('solicitudes/{solicitud}', [SolicitudController::class, 'update'])
