@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateSolicitudRequest;
 use App\Http\Requests\AprobarSolicitudRequest;
 use App\Models\Entrega;
 use App\Models\Equipo;
+use App\Models\Oficina;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,16 +37,27 @@ class SolicitudController extends Controller
     public function create(Request $request)
     {
         $user = $request->user();
-        return view('solicitudes.create', compact('user'));
+
+        // ✅ Si es admin, cargar oficinas para que elija; si no, colección vacía
+        $oficinas = $user->esAdmin()
+            ? Oficina::orderBy('nombre')->get()
+            : collect();
+
+        return view('solicitudes.create', compact('user', 'oficinas'));
     }
 
     public function store(StoreSolicitudRequest $request)
     {
         $user = $request->user();
 
+        // ✅ Si es admin usa la oficina seleccionada; si es solicitante, la suya
+        $oficinaId = $user->esAdmin()
+            ? $request->oficina_id
+            : $user->oficina_id;
+
         Solicitud::create([
             'user_id'          => $user->id,
-            'oficina_id'       => $user->oficina_id,
+            'oficina_id'       => $oficinaId,
             'fecha_solicitud'  => now()->toDateString(),
             'fecha_requerida'  => $request->fecha_requerida,
             'fecha_fin'        => $request->fecha_fin,

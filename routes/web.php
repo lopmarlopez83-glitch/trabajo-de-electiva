@@ -24,6 +24,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
 
     Route::get('solicitudes', [SolicitudController::class, 'index'])->name('solicitudes.index');
+
+    // ✅ create y store ahora son compartidos (admin y solicitante pueden crear)
+    Route::get('solicitudes/create', [SolicitudController::class, 'create'])->name('solicitudes.create');
+    Route::post('solicitudes', [SolicitudController::class, 'store'])->name('solicitudes.store');
+
     Route::get('solicitudes/{solicitud}', [SolicitudController::class, 'show'])
         ->whereNumber('solicitud')->name('solicitudes.show');
 
@@ -71,8 +76,7 @@ Route::middleware('auth')->group(function () {
 
     // ==================== SOLO SOLICITANTE ====================
     Route::middleware('role:solicitante')->group(function () {
-        Route::get('solicitudes/create', [SolicitudController::class, 'create'])->name('solicitudes.create');
-        Route::post('solicitudes', [SolicitudController::class, 'store'])->name('solicitudes.store');
+        // ✅ create y store ya no están aquí (se movieron al grupo compartido)
         Route::get('solicitudes/{solicitud}/edit', [SolicitudController::class, 'edit'])
             ->whereNumber('solicitud')->name('solicitudes.edit');
         Route::put('solicitudes/{solicitud}', [SolicitudController::class, 'update'])
